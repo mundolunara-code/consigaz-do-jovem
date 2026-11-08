@@ -199,6 +199,13 @@ tr.cx-tot td{border-top:1.5px solid var(--line);font-weight:800;background:#fafb
 /* ---------- PDV (quick sale) ---------- */
 .pdv{display:grid;grid-template-columns:1fr 380px;gap:16px;align-items:start}
 .prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:9px}
+.cli-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;max-height:320px;overflow:auto;padding:2px}
+.cli-chip{background:#fff;border:1.5px solid var(--line);border-radius:11px;padding:9px 10px;cursor:pointer;transition:.12s;display:flex;align-items:center;gap:8px;text-align:left}
+.cli-chip:hover{border-color:var(--blue);box-shadow:0 4px 12px rgba(30,86,214,.12);transform:translateY(-1px)}
+.cli-chip.sel{border-color:var(--blue);background:#e7effe;box-shadow:0 0 0 2px rgba(30,86,214,.18)}
+.cli-chip .ava{width:30px;height:30px;min-width:30px;border-radius:9px;background:#e7effe;color:var(--blue);font-weight:800;font-size:11px;display:flex;align-items:center;justify-content:center}
+.cli-chip .cn{font-weight:700;font-size:12.5px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cli-chip .ct{font-size:10.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .prod-btn{background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:10px 8px;text-align:center;transition:.13s;position:relative}
 .prod-btn:hover{border-color:var(--blue);box-shadow:0 6px 18px rgba(30,86,214,.14);transform:translateY(-2px)}
 .prod-btn:active{transform:translateY(0)}
@@ -763,8 +770,8 @@ function renderCliPicker(){
 }
 function filterCli(q){
   const box=$('#cliOptions');if(!box)return;q=q.toLowerCase();
-  const list=DB.clientes.filter(c=>c.nome.toLowerCase().includes(q)||(c.telefone||'').includes(q)).slice(0,6);
-  box.innerHTML=list.length?list.map(c=>`<div class="list-row" style="cursor:pointer" onclick="PDV_CLIENT='${c.id}';renderCliPicker()"><div class="mini-ic" style="background:#e7effe;color:var(--blue);font-weight:800;font-size:12px">${initials(c.nome)}</div><div style="flex:1"><b>${esc(c.nome)}</b><div style="font-size:12px;color:var(--muted)">${esc(c.telefone)} · ${esc(c.bairro||'')}</div></div>${ic('plus')}</div>`).join(''):'<p style="font-size:12.5px;color:var(--muted);padding:8px 0">Nenhum cliente. Use "Cadastrar rápido".</p>';
+  const list=DB.clientes.filter(c=>c.nome.toLowerCase().includes(q)||(c.telefone||'').includes(q)).slice(0,60);
+  box.innerHTML=list.length?`<div class="cli-grid">${list.map(c=>`<button class="cli-chip ${PDV_CLIENT===c.id?'sel':''}" onclick="PDV_CLIENT='${c.id}';renderCliPicker()" title="${esc(c.nome)} · ${esc(c.telefone||'')}"><span class="ava">${initials(c.nome)}</span><span style="min-width:0"><span class="cn">${esc(c.nome)}</span><span class="ct">${esc(c.telefone||'')}</span></span></button>`).join('')}</div>`:'<p style="font-size:12.5px;color:var(--muted);padding:8px 0">Nenhum cliente. Use "Cadastrar rápido".</p>';
 }
 function addCart(pid){
   const p=prodById(pid);const ex=CART.find(i=>i.produtoId===pid);
